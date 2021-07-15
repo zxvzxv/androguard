@@ -456,7 +456,9 @@ class APK:
         """
 
         app_name = self.get_attribute_value('application', 'label')
-        if app_name is None:
+        app_name = self.get_real_appname(app_name)
+
+        if (app_name is None) or (app_name == ''):
             activities = self.get_main_activities()
             main_activity_name = None
             if len(activities) > 0:
@@ -465,13 +467,17 @@ class APK:
             # FIXME: would need to use _format_value inside get_attribute_value for each returned name!
             # For example, as the activity name might be foobar.foo.bar but inside the activity it is only .bar
             app_name = self.get_attribute_value('activity', 'label', name=main_activity_name)
+            app_name = self.get_real_appname(app_name)
 
         if app_name is None:
             # No App name set
             # TODO return packagename instead?
             log.warning("It looks like that no app name is set for the main activity!")
             return ""
+        
+        return app_name
 
+    def get_real_appname(self, app_name):
         if app_name.startswith("@"):
             res_parser = self.get_android_resources()
             if not res_parser:
@@ -500,6 +506,7 @@ class APK:
                     ARSCResTableConfig.default_config())[0][1]
             except Exception as e:
                 log.warning("Exception selecting app name: %s" % e)
+
         return app_name
 
     def get_app_icon(self, max_dpi=65536):
