@@ -5,6 +5,7 @@ from operator import itemgetter
 from androguard.core.bytecodes import dvm
 from androguard.core.analysis import analysis
 from androguard.misc import AnalyzeAPK, AnalyzeDex
+from androguard.apk_zipfile import ZipFile
 
 
 class AnalysisTest(unittest.TestCase):
@@ -67,7 +68,7 @@ class AnalysisTest(unittest.TestCase):
         """
         Test if classes are noted as external if not both zips are opened
         """
-        from zipfile import ZipFile
+        # from zipfile import ZipFile
 
         with ZipFile("examples/tests/multidex/multidex.apk") as myzip:
             c1 = myzip.read("classes.dex")

@@ -8,7 +8,6 @@ from zlib import crc32
 import os
 import re
 import binascii
-import zipfile
 import logging
 from struct import unpack
 import hashlib
@@ -19,6 +18,9 @@ from xml.dom.pulldom import SAX2DOM
 
 # Used for reading Certificates
 from asn1crypto import cms, x509, keys
+
+# 导入自定义zip解析库
+import androguard.apk_zipfile as zipfile
 
 NS_ANDROID_URI = 'http://schemas.android.com/apk/res/android'
 NS_ANDROID = '{{{}}}'.format(NS_ANDROID_URI)  # Namespace as used by etree
@@ -1667,10 +1669,11 @@ class APK:
                 # before the end of central dir...
 
                 # These things should not happen for APKs
-                if this_disk != 0:
-                    raise BrokenAPKError("Not sure what to do with multi disk ZIP!")
-                if disk_central != 0:
-                    raise BrokenAPKError("Not sure what to do with multi disk ZIP!")
+                # 跳过这些字节的判断，有恶意样本修改这个字节对抗分析
+                # if this_disk != 0:
+                #     raise BrokenAPKError("Not sure what to do with multi disk ZIP!")
+                # if disk_central != 0:
+                #     raise BrokenAPKError("Not sure what to do with multi disk ZIP!")
                 break
             f.seek(-4, io.SEEK_CUR)
 

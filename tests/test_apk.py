@@ -173,7 +173,7 @@ class APKTest(unittest.TestCase):
         # These APKs are from the apksign testcases and cover
         # all different signature algorithms as well as some error cases
         from androguard.core.bytecodes.apk import APK
-        import zipfile
+        import androguard.apk_zipfile as zipfile
         from asn1crypto import x509, pem
         import binascii
         root = "examples/signing/apksig"

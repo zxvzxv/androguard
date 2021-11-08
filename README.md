@@ -1,60 +1,29 @@
-![banner](https://raw.githubusercontent.com/androguard/androguard/master/assets/CI/banner.png)
 
 # Androguard
 
-[![Build Status](https://travis-ci.org/androguard/androguard.svg?branch=master)](https://travis-ci.org/androguard/androguard)
-[![Documentation Status](https://readthedocs.org/projects/androguard/badge/?version=latest)](http://androguard.readthedocs.io/en/latest/?badge=latest)
-[![PyPI version](https://badge.fury.io/py/androguard.svg)](https://badge.fury.io/py/androguard)
-[![Codecoverage](https://codecov.io/gh/androguard/androguard/branch/master/graph/badge.svg)](https://codecov.io/gh/androguard/androguard/)
+原始androguard项目很长时间没动了，不得不自己动手
 
-```
-pip install -U androguard
-```
-... let's start reversing!
+## 目的
 
-## Features
+实际分析apk过程中，会发现很多apk使用了对抗静态分析的方法，比如修改zip文件加密字节，伪装成加密zip文件使分析失败，而apk安装时会忽略这些无用字节，使apk能够正常安装运行
 
-Androguard is a full python tool to play with Android files.
+这个版本androguard将默认所有待分析的文件都是apk格式，尽可能忽略不必要的信息防止对抗
 
-* DEX, ODEX
-* APK
-* Android's binary xml
-* Android resources
-* Disassemble DEX/ODEX bytecodes
-* Decompiler for DEX/ODEX files
+个人修改，可能会有很多bug，没精力做全面测试，遇到再说咯~~
 
-## Authors: Androguard Team
+
+## 原始作者
 
 Androguard + tools: Anthony Desnos (desnos at t0t0.fr).
 
 DAD (DAD is A Decompiler): Geoffroy Gueguen (geoffroy dot gueguen at gmail dot com)
 
-## Documentation
+## 原始文档
 
 Find the documentation for master on [ReadTheDocs](http://androguard.readthedocs.io/en/latest/).
 
 There are some (probably broken/outdated) examples and demos in the folders [demos](https://github.com/androguard/androguard/tree/master/demos) and [examples](https://github.com/androguard/androguard/tree/master/examples).
 
-## Projects using Androguard
-In alphabetical order
-
-* [AndroPyTool](https://github.com/alexMyG/AndroPyTool)
-* [AppKnox](http://appknox.com)
-* [Cuckoo Sandbox](https://cuckoosandbox.org)
-* [Deckard](https://github.com/hrkfdn/deckard)
-* [Droidbot](https://github.com/honeynet/droidbot)
-* [Droidstatx](https://github.com/integrity-sa/droidstatx)
-* [εxodus](https://github.com/Exodus-Privacy/exodus)
-* [F-Droid Server](https://gitlab.com/fdroid/fdroidserver)
-* [gplaycli](https://github.com/matlink/gplaycli)
-* [Koodous](https://koodous.com)
-* [MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF)
-* [qiew](https://github.com/mtivadar/qiew)
-* [Quark-Engine](https://github.com/quark-engine/quark-engine)
-* [Viper Framework](https://github.com/viper-framework/viper)
-* ... and many more!
-
-You are using Androguard and are not listed here? Just create a [ticket](https://github.com/androguard/androguard/issues) or send us a [pull request](https://github.com/androguard/androguard/pulls) with your project!
 
 ## Licenses
 
