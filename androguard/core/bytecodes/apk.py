@@ -480,6 +480,9 @@ class APK:
         return app_name
 
     def get_real_appname(self, app_name):
+        if app_name is None:
+            return app_name
+
         if app_name.startswith("@"):
             res_parser = self.get_android_resources()
             if not res_parser:
