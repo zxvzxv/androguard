@@ -948,6 +948,8 @@ class ZipExtFile(io.BufferedIOBase):
         return buf
 
     def _update_crc(self, newdata):
+        # apk文件不需要验证crc
+        return
         # Update the CRC using the given data.
         if self._expected_crc is None:
             # No need to compute the CRC if we don't have a reference value
