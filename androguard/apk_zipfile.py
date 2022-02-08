@@ -294,7 +294,10 @@ def _EndRecData(fpin):
     maxCommentStart = max(filesize - (1 << 16) - sizeEndCentDir, 0)
     fpin.seek(maxCommentStart, 0)
     data = fpin.read()
-    start = data.rfind(stringEndArchive)
+    ### fix, use find replace rfind to avoid malware write magic number into comment.
+    # start = data.rfind(stringEndArchive)
+    start = data.find(stringEndArchive)
+    ### fix end
     if start >= 0:
         # found the magic number; attempt to unpack and interpret
         recData = data[start:start+sizeEndCentDir]
@@ -948,7 +951,6 @@ class ZipExtFile(io.BufferedIOBase):
         return buf
 
     def _update_crc(self, newdata):
-        # apk文件不需要验证crc
         return
         # Update the CRC using the given data.
         if self._expected_crc is None:
