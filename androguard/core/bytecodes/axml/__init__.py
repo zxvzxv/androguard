@@ -2080,6 +2080,9 @@ class ARSCHeader:
             raise ResParserError("Can not read over the buffer size! Offset={}".format(self.start))
 
         self._type, self._header_size, self._size = unpack('<HHL', buff.read(self.SIZE))
+        ### fix
+        self._header_size = 8
+        ### fix end
 
         if expected_type and self._type != expected_type:
             raise ResParserError("Header type is not equal the expected type: Got 0x{:04x}, wanted 0x{:04x}".format(self._type, expected_type))
