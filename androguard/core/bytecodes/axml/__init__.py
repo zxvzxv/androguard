@@ -109,6 +109,9 @@ class StringBlock:
         """
         self._cache = {}
         self.header = header
+        ### fix
+        now_idx = buff.get_idx()
+        ### fix end
         # We already read the header (which was chunk_type and chunk_size
         # Now, we read the string_count:
         self.stringCount = unpack('<I', buff.read(4))[0]
@@ -157,8 +160,10 @@ class StringBlock:
         if (size % 4) != 0:
             log.warning("Size of strings is not aligned by four bytes.")
 
+        ### fix :read the stringbuffer correctly
+        buff.set_idx(now_idx - 8 + self.stringsOffset)
         self.m_charbuff = buff.read(size)
-
+        ###
         if self.stylesOffset != 0 and self.styleCount != 0:
             size = self.header.size - self.stylesOffset
 
@@ -703,6 +708,7 @@ class AXMLParser:
         2) a prefix might map to an empty string (some packers)
         3) uri+prefix mappings might be included several times
         4) prefix might be empty
+        5) prefix string might include an invalid word
         """
 
         NSMAP = dict()
@@ -710,6 +716,10 @@ class AXMLParser:
         for k, v in set(self.namespaces):
             s_prefix = self.sb[k]
             s_uri = self.sb[v]
+            ### fix 5)
+            if not s_prefix in ['android','app']:
+                s_prefix = 'androidfix'
+
             # Solve 2) & 4) by not including
             if s_uri != "" and s_prefix != "":
                 # solve 1) by using the last one in the list
@@ -2080,9 +2090,6 @@ class ARSCHeader:
             raise ResParserError("Can not read over the buffer size! Offset={}".format(self.start))
 
         self._type, self._header_size, self._size = unpack('<HHL', buff.read(self.SIZE))
-        ### fix
-        self._header_size = 8
-        ### fix end
 
         if expected_type and self._type != expected_type:
             raise ResParserError("Header type is not equal the expected type: Got 0x{:04x}, wanted 0x{:04x}".format(self._type, expected_type))
