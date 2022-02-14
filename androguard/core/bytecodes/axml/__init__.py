@@ -265,7 +265,9 @@ class StringBlock:
         data = self.m_charbuff[offset: offset + encoded_bytes]
 
         if self.m_charbuff[offset + encoded_bytes:offset + encoded_bytes + 2] != b"\x00\x00":
-            raise ResParserError("UTF-16 String is not null terminated! At offset={}".format(offset))
+            log.warning("UTF-16 String is not null terminated, this maybe modified by malware to avoid detect. At offset={}".format(offset))
+            return "not_null_terminated_str_fixed"
+            #raise ResParserError("UTF-16 String is not null terminated! At offset={}".format(offset))
 
         return self._decode_bytes(data, 'utf-16', str_len)
 
