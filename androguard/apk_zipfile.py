@@ -1353,6 +1353,10 @@ class ZipFile:
         if self.debug > 2:
             inferred = concat + offset_cd
             print("given, inferred, offset", offset_cd, inferred, concat)
+        ### tmp fix, apk file can not concatenated to another file
+        concat = 0
+        ###
+
         # self.start_dir:  Position of start of central directory
         self.start_dir = offset_cd + concat
         fp.seek(self.start_dir, 0)
