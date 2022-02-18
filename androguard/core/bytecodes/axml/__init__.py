@@ -1309,15 +1309,15 @@ class ARSCParser:
                 # thus jumping to the sum of the sizes might not be correct...
                 next_idx = res_header.start + res_header.header_size + type_sp_header.size + key_sp_header.size
 
-                if next_idx != self.buff.tell():
-                    # If this happens, we have a testfile ;)
-                    log.error("This looks like an odd resources.arsc file!")
-                    log.error("Please report this error including the file you have parsed!")
-                    log.error("next_idx = {}, current buffer position = {}".format(next_idx, self.buff.tell()))
-                    log.error("Please open a issue at https://github.com/androguard/androguard/issues")
-                    log.error("Thank you!")
+                # if next_idx != self.buff.tell():      # do not have to reset id
+                #     # If this happens, we have a testfile ;)
+                #     log.error("This looks like an odd resources.arsc file!")
+                #     log.error("Please report this error including the file you have parsed!")
+                #     log.error("next_idx = {}, current buffer position = {}".format(next_idx, self.buff.tell()))
+                #     log.error("Please open a issue at https://github.com/androguard/androguard/issues")
+                #     log.error("Thank you!")
 
-                self.buff.set_idx(next_idx)
+                # self.buff.set_idx(next_idx)
 
                 # Read all other headers
                 while self.buff.get_idx() <= res_header.end - ARSCHeader.SIZE:
