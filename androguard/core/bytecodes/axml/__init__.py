@@ -979,8 +979,9 @@ class AXMLPrinter:
                     log.warning("Closing tag '{}' does not match current stack! At line number: {}. Is the XML malformed?".format(self.axml.name, self.axml.m_lineNumber))
                 cur.pop()
             if _type == TEXT:
-                log.debug("TEXT for {}".format(cur[-1]))
-                cur[-1].text = self.axml.text
+                if len(cur) != 0:
+                    log.debug("TEXT for {}".format(cur[-1]))
+                    cur[-1].text = self.axml.text
             if _type == END_DOCUMENT:
                 # Check if all namespace mappings are closed
                 if len(self.axml.namespaces) > 0:
