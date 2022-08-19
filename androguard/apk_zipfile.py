@@ -1525,6 +1525,10 @@ class ZipFile:
         else:
             # Get info object for name
             zinfo = self.getinfo(name)
+        
+        ### custom by zwl, fix: bab1e92b44fda5924619301bf75a981e6c87c658
+        if zinfo.compress_type > 12:
+            zinfo.compress_type = 0
 
         if mode == 'w':
             return self._open_to_write(zinfo, force_zip64=force_zip64)
