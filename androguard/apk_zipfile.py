@@ -1526,9 +1526,10 @@ class ZipFile:
             # Get info object for name
             zinfo = self.getinfo(name)
         
-        ### custom by zwl, fix: bab1e92b44fda5924619301bf75a981e6c87c658
-        if zinfo.compress_type != 8:
-            zinfo.compress_type = 0
+        ### custom by zwl, 修复对抗：AndroidManifest.xml解析时压缩类型值异常问题: bab1e92b44fda5924619301bf75a981e6c87c658
+        if zinfo.compress_type != ZIP_DEFLATED:
+            zinfo.compress_type = ZIP_STORED
+            zinfo.compress_size = zinfo.file_size
 
         if mode == 'w':
             return self._open_to_write(zinfo, force_zip64=force_zip64)

@@ -621,6 +621,9 @@ class AXMLParser:
                     self.m_attributes[i] = self.m_attributes[i] >> 24
 
                 self.m_event = START_TAG
+
+                ### custom by zwl, 修复对抗：AndroidManifest.xml解析时startTagChunk尾部插入几个字节冗余数据，bda92187fee086e379c846319fea9df613391112
+                self.buff.set_idx(h.end)
                 break
 
             if h.type == RES_XML_END_ELEMENT_TYPE:
@@ -933,7 +936,11 @@ class AXMLPrinter:
         while self.axml.is_valid():
             _type = next(self.axml)
 
+
             if _type == START_TAG:
+                ### custom by zwl, 修复AndroidMainfest.xml对抗：tag name为空，a6c5e99a7d4d2f49f90bc693d8613c273603194a
+                if self.axml.name == '': continue
+
                 uri = self._print_namespace(self.axml.namespace)
                 uri, name = self._fix_name(uri, self.axml.name)
                 tag = "{}{}".format(uri, name)
@@ -950,8 +957,16 @@ class AXMLPrinter:
 
                 for i in range(self.axml.getAttributeCount()):
                     uri = self._print_namespace(self.axml.getAttributeNamespace(i))
-                    uri, name = self._fix_name(uri, self.axml.getAttributeName(i))
-                    value = self._fix_value(self._get_attribute_value(i))
+
+                    # uri, name = self._fix_name(uri, self.axml.getAttributeName(i))
+                    ### custom by zwl, 修复对抗：AndroidManifest.xml解析时attribute name值异常报错，87ba1b9fcf71ecbba570f9ef06997e9f99f11e82
+                    try: uri, name = self._fix_name(uri, self.axml.getAttributeName(i))
+                    except: continue
+
+                    # value = self._fix_value(self._get_attribute_value(i))
+                    ### custom by zwl, 修复对抗：AndroidManifest.xml解析时attribute value值为空，bda92187fee086e379c846319fea9df613391112
+                    try: value = self._fix_value(self._get_attribute_value(i))
+                    except: value = ''
 
                     log.debug("found an attribute: {}{}='{}'".format(uri, name, value.encode("utf-8")))
                     if "{}{}".format(uri, name) in elem.attrib:
@@ -969,6 +984,9 @@ class AXMLPrinter:
                 cur.append(elem)
 
             if _type == END_TAG:
+                ### custom by zwl, 修复AndroidMainfest.xml对抗：tag name为空，a6c5e99a7d4d2f49f90bc693d8613c273603194a
+                if self.axml.name == '': continue
+
                 if not cur:
                     log.warning("Too many END_TAG! No more elements available to attach to!")
 
