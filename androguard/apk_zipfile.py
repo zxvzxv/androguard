@@ -1402,7 +1402,7 @@ class ZipFile:
             x.date_time = ( (d>>9)+1980, (d>>5)&0xF, d&0x1F,
                             t>>11, (t>>5)&0x3F, (t&0x1F) * 2 )
 
-            x._decodeExtra()
+            # x._decodeExtra()  ## fix apk不需要解析extra
             x.header_offset = x.header_offset + concat
             self.filelist.append(x)
             self.NameToInfo[x.filename] = x
