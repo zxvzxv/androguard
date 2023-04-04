@@ -27,5 +27,11 @@ test_session
 
 .eggs/
 ak_androguard.egg-info
+*.ag
+*.log
+*.db
+*.db-*
+*DS_Store*
+*.txt
 
 *.out
