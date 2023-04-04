@@ -1017,14 +1017,8 @@ class AXMLPrinter:
                     logger.warning("Closing tag '{}' does not match current stack! At line number: {}. Is the XML malformed?".format(self.axml.name, self.axml.m_lineNumber))
                 cur.pop()
             if _type == TEXT:
-<<<<<<< HEAD:androguard/core/bytecodes/axml/__init__.py
-                if len(cur) != 0:
-                    log.debug("TEXT for {}".format(cur[-1]))
-                    cur[-1].text = self.axml.text
-=======
                 logger.debug("TEXT for {}".format(cur[-1]))
                 cur[-1].text = self.axml.text
->>>>>>> 372dad2b4442bc6e6bef19890d135521f7356b5b:androguard/core/axml/__init__.py
             if _type == END_DOCUMENT:
                 # Check if all namespace mappings are closed
                 if len(self.axml.namespaces) > 0:
@@ -1354,17 +1348,6 @@ class ARSCParser:
                 # thus jumping to the sum of the sizes might not be correct...
                 next_idx = res_header.start + res_header.header_size + type_sp_header.size + key_sp_header.size
 
-<<<<<<< HEAD:androguard/core/bytecodes/axml/__init__.py
-                # if next_idx != self.buff.tell():      # do not have to reset id
-                #     # If this happens, we have a testfile ;)
-                #     log.error("This looks like an odd resources.arsc file!")
-                #     log.error("Please report this error including the file you have parsed!")
-                #     log.error("next_idx = {}, current buffer position = {}".format(next_idx, self.buff.tell()))
-                #     log.error("Please open a issue at https://github.com/androguard/androguard/issues")
-                #     log.error("Thank you!")
-
-                # self.buff.set_idx(next_idx)
-=======
                 if next_idx != self.buff.tell():
                     # If this happens, we have a testfile ;)
                     logger.error("This looks like an odd resources.arsc file!")
@@ -1374,7 +1357,6 @@ class ARSCParser:
                     logger.error("Thank you!")
 
                 self.buff.seek(next_idx)
->>>>>>> 372dad2b4442bc6e6bef19890d135521f7356b5b:androguard/core/axml/__init__.py
 
                 # Read all other headers
                 while self.buff.tell() <= res_header.end - ARSCHeader.SIZE:
