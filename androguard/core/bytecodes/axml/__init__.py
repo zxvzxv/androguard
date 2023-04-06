@@ -592,8 +592,11 @@ class AXMLParser:
                 self.m_namespaceUri, = unpack('<L', self.buff.read(4))
                 # Name of the Tag (String ID)
                 self.m_name, = unpack('<L', self.buff.read(4))
-                # FIXME: Flags
-                _ = self.buff.read(4)
+                ### fix: get attributes start and length
+                attributeStart, = unpack('<H', self.buff.read(2))
+                attributeLen, = unpack('<H', self.buff.read(2))
+                # _ = self.buff.read(4)
+                
                 # Attribute Count
                 attributeCount, = unpack('<L', self.buff.read(4))
                 # Class Attribute
@@ -606,7 +609,14 @@ class AXMLParser:
 
                 # Now, we parse the attributes.
                 # Each attribute has 5 fields of 4 byte
-                for i in range(0, self.m_attribute_count * ATTRIBUTE_LENGHT):
+                ### fix: Each attribute has more than 5 fields,but only first 5 fields be used. abdf6d4020a349d42a2f7bdf8d11ab767361d183
+                sub = attributeLen/4 - ATTRIBUTE_LENGHT
+                jump_ls = []
+                if sub > 0:
+                    for j in range(1,self.m_attribute_count):
+                        jump_ls.append(int(int(attributeLen/4) * j - 1))
+
+                for i in range(0, self.m_attribute_count * int(attributeLen/4)):
                     # Each field is linearly parsed into the array
                     # Each Attribute contains:
                     # * Namespace URI (String ID)
@@ -614,6 +624,11 @@ class AXMLParser:
                     # * Value
                     # * Type
                     # * Data
+                    
+                    ### 我服了这个attributes解析的实现方式，为啥要用数组存？
+                    if i in jump_ls:    ### fix: abdf6d4020a349d42a2f7bdf8d11ab767361d183
+                        self.buff.read(4)
+                        continue
                     self.m_attributes.append(unpack('<L', self.buff.read(4))[0])
 
                 # Then there are class_attributes
@@ -1251,6 +1266,7 @@ class ARSCParser:
         self.resource_configs = defaultdict(lambda: defaultdict(set))
         self.resource_keys = defaultdict(lambda: defaultdict(defaultdict))
         self.stringpool_main = None
+        self.package_ids = set()
 
         # First, there is a ResTable_header.
         self.header = ARSCHeader(self.buff, expected_type=RES_TABLE_TYPE)
@@ -1301,6 +1317,12 @@ class ARSCParser:
 
                 current_package = ARSCResTablePackage(self.buff, res_header)
                 package_name = current_package.get_name()
+
+                ### fix: 多个重复的package，只取第一个，abdf6d4020a349d42a2f7bdf8d11ab767361d183
+                if current_package.mResId in self.package_ids:
+                    self.buff.set_idx(res_header.end)
+                    continue
+                self.package_ids.add(current_package.mResId)
 
                 # After the Header, we have the resource type symbol table
                 self.buff.set_idx(current_package.header.start + current_package.typeStrings)
@@ -2299,22 +2321,32 @@ class ARSCResTableConfig:
             # uint8_t density
             self.screenType = unpack('<I', buff.read(4))[0]
 
-            # struct of
-            # uint8_t keyboard
-            # uint8_t navigation
-            # uint8_t inputFlags
-            # uint8_t inputPad0
-            self.input = unpack('<I', buff.read(4))[0]
+            ### fix: 发现了config长度小于32的情况，进行修复。abdf6d4020a349d42a2f7bdf8d11ab767361d183
+            if self.size >= 20:
+                # struct of
+                # uint8_t keyboard
+                # uint8_t navigation
+                # uint8_t inputFlags
+                # uint8_t inputPad0
+                self.input = unpack('<I', buff.read(4))[0]
+            else:
+                self.input = 0
 
-            # struct of
-            # uint16_t screenWidth
-            # uint16_t screenHeight
-            self.screenSize = unpack('<I', buff.read(4))[0]
+            if self.size >= 24:
+                # struct of
+                # uint16_t screenWidth
+                # uint16_t screenHeight
+                self.screenSize = unpack('<I', buff.read(4))[0]
+            else:
+                self.screenSize = 0
 
-            # struct of
-            # uint16_t sdkVersion
-            # uint16_t minorVersion  which should be always 0, as the meaning is not defined
-            self.version = unpack('<I', buff.read(4))[0]
+            if self.size >= 28:
+                # struct of
+                # uint16_t sdkVersion
+                # uint16_t minorVersion  which should be always 0, as the meaning is not defined
+                self.version = unpack('<I', buff.read(4))[0]
+            else:
+                self.version = 0
 
             # The next three fields seems to be optional
             if self.size >= 32:
@@ -2694,8 +2726,9 @@ class ARSCResStringPoolRef:
 
         self.size, = unpack("<H", buff.read(2))
         self.res0, = unpack("<B", buff.read(1))
-        if self.res0 != 0:
-            raise ResParserError("res0 must be always zero!")
+        ### fix: res0可以随便填
+        # if self.res0 != 0:
+        #     raise ResParserError("res0 must be always zero!")
         self.data_type = unpack('<B', buff.read(1))[0]
         # data is interpreted according to data_type
         self.data = unpack('<I', buff.read(4))[0]
