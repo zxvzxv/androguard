@@ -15,6 +15,8 @@ import sys
 import binascii
 
 log = logging.getLogger("androguard.axml")
+# custom by zwl: default DEBUG is too many
+log.setLevel(logging.ERROR)
 
 
 # Constants for ARSC Files
