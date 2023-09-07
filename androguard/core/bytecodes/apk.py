@@ -26,6 +26,8 @@ NS_ANDROID_URI = 'http://schemas.android.com/apk/res/android'
 NS_ANDROID = '{{{}}}'.format(NS_ANDROID_URI)  # Namespace as used by etree
 
 log = logging.getLogger("androguard.apk")
+# custom by zwl: default DEBUG is too many
+log.setLevel(logging.ERROR)
 
 
 def parse_lxml_dom(tree):
