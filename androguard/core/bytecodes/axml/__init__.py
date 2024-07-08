@@ -2649,7 +2649,11 @@ class ARSCResTableEntry:
         self.index = unpack('<I', buff.read(4))[0]
 
         if self.is_complex():
-            self.item = ARSCComplex(buff, parent)
+            ############## fix ####################
+            # complex 数据主要用于app界面ui的样式，逆向基本用不到，这里也经常解析错误，直接跳过了
+            # self.item = ARSCComplex(buff, parent)
+            pass
+            #######################################
         else:
             # If FLAG_COMPLEX is not set, a Res_value structure will follow
             self.key = ARSCResStringPoolRef(buff, self.parent)
