@@ -2665,7 +2665,15 @@ class ARSCResTableEntry:
         return self.index
 
     def get_value(self):
-        return self.parent.mKeyStrings.getString(self.index)
+        ### fix ###
+        ### 由于安卓的字符串解析是用到再解析，字符串总数字段没用到，而此库会根据字符串总数一次性解析全量字符串，
+        ### 所以直接try过滤掉解析错误的字符串。
+        res = ""
+        try:
+            res = self.parent.mKeyStrings.getString(self.index)
+        except Exception as e:
+            log.warning("get_value error")
+        return res
 
     def get_key_data(self):
         return self.key.get_data_value()
